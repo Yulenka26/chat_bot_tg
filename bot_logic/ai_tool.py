@@ -4,6 +4,8 @@ from aiogram import Dispatcher
 from dotenv import load_dotenv
 from gigachat import GigaChatAsyncClient, Chat, Messages, MessagesRole
 
+from bot_logic.ai_roles import ROLES
+
 load_dotenv()
 
 _GIGACHAT_CLIENT = GigaChatAsyncClient(
@@ -13,17 +15,12 @@ _GIGACHAT_CLIENT = GigaChatAsyncClient(
     ca_bundle_file="./certs/cert.pem",
 )
 
-async def get_gigachat_response(user_text: str):
+async def get_gigachat_response(user_text: str, role=str):
     payload = Chat(
         messages=[
             Messages(
                 role=MessagesRole.SYSTEM,
-                content="""
-                Ты — строгий генеральный директор крупной корпорации.
-Перепиши текст пользователя на бюрократический деловой язык,
-используя сложные обороты, канцеляризмы и пассивный залог. 
-Будь максимально вежлив, но холоден.
-                """
+                content=ROLES.get(role, "emoji")["prompt"],
             ),
             Messages(role=MessagesRole.USER, content=user_text),
         ]
